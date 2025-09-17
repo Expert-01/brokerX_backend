@@ -247,8 +247,8 @@ COPY public.users (id, name, email, password, created_at, balance, is_admin) FRO
 5	Test@	test2@gmail.com	$2b$10$3NoJINRRrYqf1766wWWAFOf61UxfqnG4DRi/v3RJv3Xei6QQPZcKu	2025-09-02 15:21:21.686345	0	f
 1	Gideon	gidsoala@gmail.com	$2b$10$av80/NjXKb6HmvctmQHnRO/3oteb4IH1V7wWi1i71/42Lq2WcqLeK	2025-09-02 14:52:31.645451	0	t
 2	Daniel	daniel@gmail.com	$2b$10$InlcPQvUmlLgYdQti/fsguBFaYZVGKTu0DpLJkSqh6Az1D61WLJne	2025-09-02 14:58:16.751853	200	f
-7	Sasuke	sasuke@gmail.com	$2b$10$kWGxPwJ2QWXGgK/P9Tfk9ODvujB/6cUwjYPFSGLc0/yPCKPkycMUW	2025-09-10 02:46:25.813215	322.255555555555558812	f
-8	Juraya	juraya@gmail.com	$2b$10$bKACLrYTQFqE5PyBanpl8.mPoN7Z/SKM91/V2qjkY7j9SI66jkNV.	2025-09-13 04:50:31.318578	199058.250000000000002880	f
+7	Sasuke	sasuke@gmail.com	$2b$10$kWGxPwJ2QWXGgK/P9Tfk9ODvujB/6cUwjYPFSGLc0/yPCKPkycMUW	2025-09-10 02:46:25.813215	323.483333333333336654	f
+8	Juraya	juraya@gmail.com	$2b$10$bKACLrYTQFqE5PyBanpl8.mPoN7Z/SKM91/V2qjkY7j9SI66jkNV.	2025-09-13 04:50:31.318578	199059.430555555555558496	f
 9	Harry	harry@gmail.com	$2b$10$UaRW4Z/yTqyggP1fPpyAM.UXoR2N.wPJoOdxNxO3JvyTSOQvpVKMC	2025-09-16 09:54:48.082973	0	f
 6	Emmanuel	emma@gmail.com	$2b$10$oEcoslarAAufwzzQ89MCeexsf6.zbWa4Ks8/NlN/3TNmH1hlyiZWy	2025-09-03 16:43:27.97019	6286.00	f
 \.
