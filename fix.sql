@@ -1,0 +1,2 @@
+ALTER TABLE public.users
+ADD COLUMN balance NUMERIC(20,8) NOT NULL DEFAULT 0;
