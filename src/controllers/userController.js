@@ -1,3 +1,13 @@
+export const getUserBalance = async (req, res) => {
+  try {
+    const userId = req.params.userId || req.params.id;
+    const userRes = await pool.query('SELECT balance FROM users WHERE id = $1', [userId]);
+    const balance = userRes.rows[0]?.balance || 0;
+    res.json({ balance });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+};
 import pool from '../config/db.js';
 
 export const getUserBalances = async (req, res) => {

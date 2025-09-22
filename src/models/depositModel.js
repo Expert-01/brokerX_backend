@@ -1,5 +1,6 @@
 
 import pool from "../config/db.js";
+import { recordBalanceHistory } from "./balanceHistoryModel.js";
 
 // Create new deposit
 async function createDeposit(userId, plan, amount, method) {
@@ -40,21 +41,18 @@ async function updateDepositStatus(depositId, status) {
   return result.rows[0];
 }
 async function updateBalance(userId, amount) {
-  console.log("Updating balance:", userId);
+  // Get current balance
   const currentRes = await pool.query(`SELECT balance FROM users WHERE id = $1`, [userId]);
   const currentBalance = currentRes.rows[0]?.balance || 0;
-  const result =  await pool.query(
-      `UPDATE users SET balance = balance + $1 WHERE id = $2 RETURNING *`,
-      [amount, userId]
-    );
-    console.log("Update result:", result.rows);
-    const newBalance = result.rows[0].balance;
-    console.log(`User ${userId} balance updated: ${currentBalance} to ${newBalance}`);
-    
-    console.log("Update result:", currentBalance);
-    
-    
-    return result.rows[0];
+  // Update balance
+  const result = await pool.query(
+    `UPDATE users SET balance = balance + $1 WHERE id = $2 RETURNING *`,
+    [amount, userId]
+  );
+  const newBalance = result.rows[0].balance;
+  // Record balance history
+  await recordBalanceHistory(userId, newBalance);
+  return result.rows[0];
 }
 
 export { createDeposit, getUserDeposits, getAllUsers, updateDepositStatus, updateBalance };

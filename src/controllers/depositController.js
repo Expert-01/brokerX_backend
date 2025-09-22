@@ -11,16 +11,11 @@ async function depositFunds(req, res) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Always create deposit in DB for transaction history
     const deposit = await createDeposit(userId, plan, amount, method);
-    res.status(201).json({ message: "Deposit created successfully", deposit });
-
-
-    //Update user's wallet balance (pseudo-code, implement as needed)
-    //const balance = await updateBalance(userId, amount);
-
-    res.json({ message: "Deposit successful", newBalance: balance.rows[0].balance });
+    // Only return deposit info, do not update balance or send multiple responses
+    return res.status(201).json({ message: "Deposit created successfully", deposit });
   } catch (err) {
-   // console.error(err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 }

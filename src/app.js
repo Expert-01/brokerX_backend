@@ -15,7 +15,7 @@ const app = express();
 
 // CORS middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: [process.env.LOCAL_URL, process.env.PUBLIC_URL],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -35,8 +35,14 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/market', marketRoutes);
 
 
+
+
+import withdrawRoutes from './routes/withdrawRoutes.js';
+import balanceHistoryRoutes from './routes/balanceHistoryRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
+app.use('/api/withdraw', withdrawRoutes);
 app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/balance-history', balanceHistoryRoutes);
 
 // Test route
 app.get('/api/test', (req, res) => {

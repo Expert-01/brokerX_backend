@@ -60,10 +60,18 @@ export const login = async ( req, res ) => {
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({message: 'Login successful', token, user: {
-            id: user.id,
-            email:user.email
-        }});
+                res.status(200).json({
+                    message: 'Login successful',
+                    token,
+                    user: {
+                        id: user.id,
+                        email: user.email,
+                        is_admin: user.is_admin,
+                        name: user.name,
+                        balance: user.balance,
+                        created_at: user.created_at
+                    }
+                });
         console.log("JWT Token:", token);
 
     } catch (error) {
