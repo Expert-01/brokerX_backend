@@ -3,17 +3,23 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import app from './src/app.js';
-//import './roiCron.js';
+// import './roiCron.js';
 
 dotenv.config();
 
 // Create HTTP server from Express app
 const server = http.createServer(app);
 
+// Allowed origins (local + production frontend)
+const allowedOrigins = [
+  'http://localhost:5173',         // local dev
+  'https://broker-fx.vercel.app'   // deployed frontend
+];
+
 // Initialize Socket.io with CORS
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -35,6 +41,11 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
+});
+
+// Health check (important for Render)
+app.get('/', (req, res) => {
+  res.send('BrokerX Backend is running 🚀');
 });
 
 // Start server
