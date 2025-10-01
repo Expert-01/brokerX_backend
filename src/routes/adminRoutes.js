@@ -8,7 +8,7 @@ const router = express.Router();
 //router.get("/deposits", authMiddleware, isAdmin, getAllUsers);
 ///router.get("/admin/users", authMiddleware, isAdmin, viewUsers);
 
-router.get("/deposits", authMiddleware, isAdmin, getAllDeposits);
+router.get("/deposits", authMiddleware, getAllDeposits);
 router.put("/deposits/:depositId/approve", approveDeposit);
 router.post("/deposits/:depositId/reject", authMiddleware, isAdmin, rejectDeposit);
 router.get("/debug/deposits", debugDeposits);
