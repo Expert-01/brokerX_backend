@@ -28,7 +28,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/deposit', depositRoutes);
 app.use('/api/investment', investmentRoutes);
-app.use('/api/admin/deposits', depositRoutes);
+//app.use('/api/admin/deposits', depositRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', getUserRoutes);
 app.use('/api/orders', orderRoutes);
