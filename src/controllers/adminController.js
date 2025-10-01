@@ -56,12 +56,12 @@ export const rejectDeposit = async (req, res) => {
 };  
 
 export const getAllDeposits = async (_unused, res) => {
-    try {
-        const result = await getAllUsers();
-        result.status(200).json(result);
-
-    } catch (error) {
-       res.status(500).json({ error: "Internal server error" });
-        //console.error("Error fetching all users:", error);
-    }
+  try {
+    const deposits = await getAllUsers(); // clearer name
+    res.status(200).json(deposits);       // use Express "res" here
+  } catch (error) {
+    console.error("Error fetching deposits:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 }
