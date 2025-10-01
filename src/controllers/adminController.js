@@ -55,16 +55,17 @@ export const rejectDeposit = async (req, res) => {
   }
 };  
 
-export const getAllDeposits = async (_unused, res) => {
+export const getAllDeposits = async (req, res) => {
   try {
-    const deposits = await getAllUsers(); // clearer name
-    res.status(200).json(deposits);       // use Express "res" here
+    const deposits = await getAllUsers();  // fetch rows
+    return res.status(200).json(deposits); // send once, properly
   } catch (error) {
     console.error("Error fetching deposits:", error);
-    res.status(500).json({ error: "Internal server error" });
+    if (!res.headersSent) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
   }
 };
-
 
 export const debugDeposits = async (req, res) => {
   try {
