@@ -64,4 +64,4 @@ export const getAllDeposits = async (_unused, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-}
+
