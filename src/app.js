@@ -44,6 +44,8 @@ app.use('/api/withdraw', withdrawRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/balance-history', balanceHistoryRoutes);
 
+import paymentMethodRoutes from "./routes/paymentMethodRoutes.js";
+app.use("/api/payment-methods", paymentMethodRoutes);
 // Test route
 app.get('/api/test', (req, res) => {
   console.log('Frontend just pinged me');
