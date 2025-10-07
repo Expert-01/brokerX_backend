@@ -6,8 +6,8 @@ import {
   deletePaymentMethod,
   getPublicPaymentMethods,
 } from "../controllers/paymentMethodController.js";
-import { protect } from "../middleware/authMiddleware.js";
-import { isAdmin } from "../middleware/adminMiddleware.js";
+import { protect } from "../middlewares/authMiddleware.js";
+import { isAdmin } from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
 
