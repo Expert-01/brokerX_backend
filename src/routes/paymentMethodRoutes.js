@@ -6,7 +6,7 @@ import {
   deletePaymentMethod,
   getPublicPaymentMethods,
 } from "../controllers/paymentMethodController.js";
-import { protect } from "../middlewares/authMiddleware.js";
+import authMiddleware from "../middlewares/authMiddleware.js"; // ✅ default import
 import { isAdmin } from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
@@ -15,9 +15,9 @@ const router = express.Router();
 router.get("/public", getPublicPaymentMethods);
 
 // Admin routes
-router.get("/", protect, isAdmin, getAllPaymentMethods);
-router.post("/", protect, isAdmin, createPaymentMethod);
-router.put("/:id", protect, isAdmin, updatePaymentMethod);
-router.delete("/:id", protect, isAdmin, deletePaymentMethod);
+router.get("/", authMiddleware, isAdmin, getAllPaymentMethods);
+router.post("/", authMiddleware, isAdmin, createPaymentMethod);
+router.put("/:id", authMiddleware, isAdmin, updatePaymentMethod);
+router.delete("/:id", authMiddleware, isAdmin, deletePaymentMethod);
 
 export default router;
