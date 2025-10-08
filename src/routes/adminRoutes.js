@@ -1,15 +1,31 @@
 import express from "express";
-import { viewDeposits, approveDeposit, rejectDeposit, getAllDeposits, debugDeposits} from "../controllers/adminController.js";
+import {
+  viewDeposits,
+  approveDeposit,
+  rejectDeposit,
+  getAllDeposits,
+  debugDeposits,
+  manuallyIncreaseBalance, // ✅ New controller
+} from "../controllers/adminController.js";
 
 import authMiddleware from "../middlewares/authMiddleware.js";
 import { isAdmin } from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
-//router.get("/deposits", authMiddleware, isAdmin, getAllUsers);
-///router.get("/admin/users", authMiddleware, isAdmin, viewUsers);
 
+// ✅ View all deposits
 router.get("/deposits", authMiddleware, isAdmin, getAllDeposits);
-router.put("/deposits/:depositId/approve", approveDeposit);
+
+// ✅ Approve deposit
+router.put("/deposits/:depositId/approve", authMiddleware, isAdmin, approveDeposit);
+
+// ✅ Reject deposit
 router.post("/deposits/:depositId/reject", authMiddleware, isAdmin, rejectDeposit);
-router.get("/debug/deposits", debugDeposits);
+
+// ✅ Debug route (optional)
+router.get("/debug/deposits", authMiddleware, isAdmin, debugDeposits);
+
+// ✅ Manually increase user balance
+router.patch("/users/:userId/increase-balance", authMiddleware, isAdmin, manuallyIncreaseBalance);
+
 export default router;
