@@ -79,34 +79,45 @@ export const debugDeposits = async (req, res) => {
 };
 
 // ✅ Manually increase user balance (NEW)
+
 export const manuallyIncreaseBalance = async (req, res) => {
-  const { userId } = req.params;
-  const { amount } = req.body;
-
-  if (!amount || isNaN(amount) || amount <= 0) {
-    return res.status(400).json({ error: "Invalid amount." });
-  }
-
   try {
-    // Update user balance
-    const result = await pool.query(
-      "UPDATE users SET balance = balance + $1 WHERE id = $2 RETURNING *",
-      [amount, userId]
+    const { userId, amount, adminId, reason } = req.body;
+
+    // Get current user balance
+    const userResult = await pool.query(
+      "SELECT balance FROM users WHERE id = $1",
+      [userId]
     );
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: "User not found." });
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // Record transaction in balance history
-    await recordBalanceHistory(userId, amount, "Manual top-up by admin");
+    const previousBalance = userResult.rows[0].balance;
+    const newBalance = previousBalance + Number(amount);
 
-    res.status(200).json({
-      message: "User balance increased successfully.",
-      user: result.rows[0],
+    // Update user balance
+    await pool.query("UPDATE users SET balance = $1 WHERE id = $2", [
+      newBalance,
+      userId,
+    ]);
+
+    // Log the adjustment in the new table
+    await pool.query(
+      `INSERT INTO admin_balance_adjustments 
+       (user_id, amount, action, previous_balance, new_balance, reason, admin_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [userId, amount, "increase", previousBalance, newBalance, reason, adminId]
+    );
+
+    res.json({
+      message: "User balance increased successfully",
+      previousBalance,
+      newBalance,
     });
-  } catch (error) {
-    console.error("Error manually increasing balance:", error);
-    res.status(500).json({ error: "Internal server error" });
+  } catch (err) {
+    console.error("Error manually increasing balance:", err);
+    res.status(500).json({ error: "Server error" });
   }
 };
