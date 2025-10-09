@@ -26,6 +26,6 @@ router.post("/deposits/:depositId/reject", authMiddleware, isAdmin, rejectDeposi
 router.get("/debug/deposits", authMiddleware, isAdmin, debugDeposits);
 
 // ✅ Manually increase user balance
-router.patch("/users/:userId/increase-balance", authMiddleware, isAdmin, manuallyIncreaseBalance);
+router.patch("/users/increase-balance", authMiddleware, isAdmin, manuallyIncreaseBalance);
 
 export default router;
