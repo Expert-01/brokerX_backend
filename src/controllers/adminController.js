@@ -84,6 +84,16 @@ export const manuallyIncreaseBalance = async (req, res) => {
   try {
     const { userId, amount, adminId, reason } = req.body;
 
+    // Validate input
+    if (!userId || !amount || !adminId) {
+      return res.status(400).json({ error: "userId, amount, and adminId are required" });
+    }
+
+    const amountNum = parseFloat(amount);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      return res.status(400).json({ error: "Amount must be a positive number" });
+    }
+
     // Get current user balance
     const userResult = await pool.query(
       "SELECT balance FROM users WHERE id = $1",
@@ -94,27 +104,30 @@ export const manuallyIncreaseBalance = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const previousBalance = userResult.rows[0].balance;
-    const newBalance = previousBalance + Number(amount);
+    const previousBalance = parseFloat(userResult.rows[0].balance);
 
-    // Update user balance
+    // Calculate new balance and round to 2 decimals
+    const newBalance = parseFloat((previousBalance + amountNum).toFixed(2));
+
+    // Update user balance in DB
     await pool.query("UPDATE users SET balance = $1 WHERE id = $2", [
       newBalance,
       userId,
     ]);
 
-    // Log the adjustment in the new table
+    // Log the adjustment
     await pool.query(
       `INSERT INTO admin_balance_adjustments 
        (user_id, amount, action, previous_balance, new_balance, reason, admin_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [userId, amount, "increase", previousBalance, newBalance, reason, adminId]
+      [userId, amountNum, "increase", previousBalance, newBalance, reason || "", adminId]
     );
 
+    // Respond with clean, rounded JSON
     res.json({
       message: "User balance increased successfully",
-      previousBalance,
-      newBalance,
+      previousBalance: previousBalance.toFixed(2),
+      newBalance: newBalance.toFixed(2),
     });
   } catch (err) {
     console.error("Error manually increasing balance:", err);
