@@ -17,13 +17,19 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "Email already registered" });
     }
 
-    // Generate random numeric user ID (e.g. 7-digit number)
-    const randomUserId = Math.floor(1000000 + Math.random() * 9000000); // e.g. 4738949
+    // Generate random 7-digit ID
+    let randomUserId;
+    let idExists = true;
+    while (idExists) {
+      randomUserId = Math.floor(1000000 + Math.random() * 9000000);
+      const check = await pool.query("SELECT id FROM users WHERE id = $1", [randomUserId]);
+      idExists = check.rowCount > 0;
+    }
 
-    // Hash password (uncomment bcrypt later if needed)
-    const hashedPassword = password; // await bcrypt.hash(password, 10);
+    // Hash password (you can enable bcrypt later)
+    const hashedPassword = password;
 
-    // Save user
+    // Save new user
     const newUser = await createUser(randomUserId, name, email, hashedPassword);
 
     res.status(201).json({
