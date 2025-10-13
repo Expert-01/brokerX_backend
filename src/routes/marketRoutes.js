@@ -172,6 +172,49 @@ router.get("/price/:symbol", async (req, res) => {
   }
 });
 
+
+// ✅ Get multiple coin prices at once
+router.get("/prices", async (req, res) => {
+  try {
+    const symbols = ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
+    const coinMap = {
+      BTCUSDT: "bitcoin",
+      ETHUSDT: "ethereum",
+      SOLUSDT: "solana",
+    };
+
+    const responses = await Promise.all(
+      symbols.map(async (symbol) => {
+        const coinId = coinMap[symbol];
+        // Try CoinCap first (fast + free)
+        try {
+          const capRes = await axios.get(`https://api.coincap.io/v2/assets/${coinId}`);
+          const price = parseFloat(capRes.data.data.priceUsd);
+          const change = parseFloat(capRes.data.data.changePercent24Hr);
+          return { id: coinId, usd: price, usd_24h_change: change };
+        } catch (err) {
+          console.error(`Error fetching ${coinId} from CoinCap:`, err.message);
+          return { id: coinId, usd: 0, usd_24h_change: 0 };
+        }
+      })
+    );
+
+    // Format for your frontend
+    const formatted = responses.reduce((acc, c) => {
+      acc[c.id] = {
+        usd: c.usd,
+        usd_24h_change: c.usd_24h_change,
+      };
+      return acc;
+    }, {});
+
+    res.json(formatted);
+  } catch (error) {
+    console.error("Error fetching multiple prices:", error);
+    res.status(500).json({ error: "Failed to fetch multiple prices" });
+  }
+});
+
 export default router;
 // ...end of file...
 
