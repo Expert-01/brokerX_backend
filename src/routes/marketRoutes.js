@@ -178,29 +178,43 @@ router.get("/price/:symbol", async (req, res) => {
 
 
 // ✅ Fetch multiple coins with reliable sources
+// routes/marketRoutes.js
+
 router.get("/prices", async (req, res) => {
   try {
-    const coins = ["bitcoin", "ethereum", "solana"];
-    const response = await axios.get(
-      "https://api.coinstats.app/public/v1/coins?skip=0&limit=50&currency=USD"
-    );
-
-    const data = response.data.coins;
+    const symbols = ["BTC", "ETH", "SOL"];
     const result = {};
 
-    coins.forEach((coin) => {
-      const found = data.find(
-        (item) => item.id.toLowerCase() === coin.toLowerCase()
-      );
-      if (found) {
-        result[coin] = {
-          usd: found.price,
-          usd_24h_change: found.priceChange1d,
-        };
-      } else {
-        result[coin] = { usd: 0, usd_24h_change: 0 };
+    // Fetch data for each coin from CryptoCompare
+    for (const sym of symbols) {
+      try {
+        const response = await axios.get(
+          `https://min-api.cryptocompare.com/data/pricemultifull`,
+          {
+            params: { fsyms: sym, tsyms: "USD" },
+          }
+        );
+
+        const raw = response.data.RAW?.[sym]?.USD;
+        if (raw) {
+          result[
+            sym.toLowerCase() === "btc"
+              ? "bitcoin"
+              : sym.toLowerCase() === "eth"
+              ? "ethereum"
+              : "solana"
+          ] = {
+            usd: raw.PRICE,
+            usd_24h_change: raw.CHANGEPCT24HOUR,
+          };
+        } else {
+          result[sym.toLowerCase()] = { usd: 0, usd_24h_change: 0 };
+        }
+      } catch (innerError) {
+        console.error(`Error fetching ${sym}:`, innerError.message);
+        result[sym.toLowerCase()] = { usd: 0, usd_24h_change: 0 };
       }
-    });
+    }
 
     res.json(result);
   } catch (error) {
@@ -208,6 +222,8 @@ router.get("/prices", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch market data" });
   }
 });
+
+
 
 
 export default router;
