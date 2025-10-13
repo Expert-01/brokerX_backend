@@ -6,6 +6,7 @@ import {
   getAllDeposits,
   debugDeposits,
   manuallyIncreaseBalance, // ✅ New controller
+  getAllRegisteredUsers
 } from "../controllers/adminController.js";
 
 import authMiddleware from "../middlewares/authMiddleware.js";
@@ -28,4 +29,6 @@ router.get("/debug/deposits", authMiddleware, isAdmin, debugDeposits);
 // ✅ Manually increase user balance
 router.patch("/users/increase-balance", authMiddleware, isAdmin, manuallyIncreaseBalance);
 
+
+router.get("/users", getAllRegisteredUsers);
 export default router;
