@@ -134,3 +134,14 @@ export const manuallyIncreaseBalance = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+
+export async function getAllUsers(req, res) {
+  try {
+    const result = await pool.query("SELECT id, name, email FROM users ORDER BY id ASC");
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
