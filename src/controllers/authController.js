@@ -7,6 +7,36 @@ import { createUser, findUserByEmail } from "../models/userModel.js";
 
 dotenv.config();
 
+export const signup = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Check if user already exists
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+
+    // Generate random numeric user ID (e.g. 7-digit number)
+    const randomUserId = Math.floor(1000000 + Math.random() * 9000000); // e.g. 4738949
+
+    // Hash password (uncomment bcrypt later if needed)
+    const hashedPassword = password; // await bcrypt.hash(password, 10);
+
+    // Save user
+    const newUser = await createUser(name, email, hashedPassword, randomUserId);
+
+    res.status(201).json({
+      message: "User registered successfully!",
+      user: newUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+    console.log("Signup error:", error.message, req.body);
+  }
+};
+
+/*
 export const signup = async ( req, res ) => {
     try {
         const { name, email, password } = req.body;
@@ -30,7 +60,7 @@ export const signup = async ( req, res ) => {
         console.log("Signup error:", error.message, req.body);
     }
 
-};
+};*/
 
 export const login = async ( req, res ) => {
     try {
