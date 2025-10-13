@@ -136,12 +136,25 @@ export const manuallyIncreaseBalance = async (req, res) => {
 };
 
 
-export async function getAllUsers(req, res) {
+
+// ✅ Get all registered users (for admin)
+export const getAllRegisteredUsers = async (req, res) => {
   try {
-    const result = await pool.query("SELECT id, name, email FROM users ORDER BY id ASC");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Error fetching users:", err);
-    res.status(500).json({ message: "Server error" });
+    const result = await pool.query(
+      `SELECT id, fullname, email, balance, created_at
+       FROM users
+       ORDER BY created_at DESC`
+    );
+
+    res.status(200).json({
+      message: "Users fetched successfully",
+      users: result.rows,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
-}
+};
+
