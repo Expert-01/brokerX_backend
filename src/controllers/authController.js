@@ -19,7 +19,7 @@ export const signup = async ( req, res ) => {
         }
 
         //Hash password
-        const hashedPassword = password; //await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
 
            // Generate a short random user_id (e.g. 8 digits)
