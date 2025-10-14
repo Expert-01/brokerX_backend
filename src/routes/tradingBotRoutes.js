@@ -1,11 +1,16 @@
-// routes/tradingBotRoutes.js
 import express from "express";
-import { getTradingBotStatus, linkBot, unlinkBot } from "../controllers/tradingBotController.js";
+import {
+  linkBotToUser,
+  unlinkBotFromUser,
+  getBotStatus,
+  simulateTrade,
+} from "../controllers/tradingBotController.js";
 
 const router = express.Router();
 
-router.get("/status/:id", getTradingBotStatus);
-router.post("/link", linkBot);
-router.post("/unlink", unlinkBot);
+router.post("/link", linkBotToUser);
+router.post("/unlink", unlinkBotFromUser);
+router.get("/status/:userId", getBotStatus);
+router.post("/simulate/:userId", simulateTrade);
 
-export default router; // ✅ Make sure this line exists
+export default router;
