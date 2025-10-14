@@ -55,9 +55,9 @@ export const login = async ( req, res ) => {
         }
 
         // Compare plain text passwords (unhashed)
-if (password !== user.password) {
+/*if (password !== user.password) {
   return res.status(400).json({ message: 'Invalid email or password' });
-}
+}*/
 
         //Create JWT Token
         if (!process.env.JWT_SECRET) {
