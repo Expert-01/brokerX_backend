@@ -54,6 +54,11 @@ export const login = async ( req, res ) => {
             return res.status(400).json({message: 'Invalid email or password'});
         }
 
+        // Compare plain text passwords (unhashed)
+if (password !== user.password) {
+  return res.status(400).json({ message: 'Invalid email or password' });
+}
+
         //Create JWT Token
         if (!process.env.JWT_SECRET) {
             throw new Error("JWT_SECRET is not defined in environment variables");
