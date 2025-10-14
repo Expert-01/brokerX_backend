@@ -78,6 +78,7 @@ export const login = async ( req, res ) => {
                         is_admin: user.is_admin,
                         name: user.name,
                         balance: user.balance,
+                        user_id: user.user_id,    //
                         created_at: user.created_at
                     }
                 });
