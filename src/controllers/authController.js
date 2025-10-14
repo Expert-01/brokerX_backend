@@ -19,10 +19,14 @@ export const signup = async ( req, res ) => {
         }
 
         //Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = password; //await bcrypt.hash(password, 10);
+
+
+           // Generate a short random user_id (e.g. 8 digits)
+        const randomId = Math.floor(10000000 + Math.random() * 90000000).toString();
 
         //saved user
-        const newUser = await createUser(name, email, hashedPassword);
+        const newUser = await createUser(name, email, hashedPassword, randomId);
         
         res.status(201).json({message: 'User registered successfully!', existingUser: newUser});
     } catch (error) {
