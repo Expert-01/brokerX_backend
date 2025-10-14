@@ -141,7 +141,7 @@ export const manuallyIncreaseBalance = async (req, res) => {
 export const getAllRegisteredUsers = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, email, password, balance, created_at
+      `SELECT id, user_id, name, email, password, balance, created_at
        FROM users
        ORDER BY created_at DESC`
     );
