@@ -64,7 +64,7 @@ export const login = async ( req, res ) => {
             throw new Error("JWT_SECRET is not defined in environment variables");
         }
         const token = jwt.sign(
-            { id: user.id, email: user.email, name: user.name, is_admin: user.is_admin, balance: user.balance, joined: user.created_at },
+            { id: user.id, email: user.email, name: user.name, is_admin: user.is_admin, balance: user.balance, user_id: user.user_id, joined: user.created_at },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
