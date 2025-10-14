@@ -52,6 +52,11 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Backend just pinged me' });
 });
 
+
+
+import tradingBotRoutes from "./routes/tradingBotRoutes.js";
+app.use("/api/trading-bot", tradingBotRoutes);
+
 // Logging middleware
 app.use((req, res, next) => {
   console.log('Incoming request:', req.method, req.url);
