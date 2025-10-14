@@ -7,42 +7,6 @@ import { createUser, findUserByEmail } from "../models/userModel.js";
 
 dotenv.config();
 
-export const signup = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    // Check if user already exists
-    const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already registered" });
-    }
-
-    // Generate random 7-digit ID
-    let randomUserId;
-    let idExists = true;
-    while (idExists) {
-      randomUserId = Math.floor(1000000 + Math.random() * 9000000);
-      const check = await pool.query("SELECT id FROM users WHERE id = $1", [randomUserId]);
-      idExists = check.rowCount > 0;
-    }
-
-    // Hash password (you can enable bcrypt later)
-    const hashedPassword = password;
-
-    // Save new user
-    const newUser = await createUser(name, email, hashedPassword);
-
-    res.status(201).json({
-      message: "User registered successfully!",
-      user: newUser,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-    console.log("Signup error:", error.message, req.body);
-  }
-};
-
-/*
 export const signup = async ( req, res ) => {
     try {
         const { name, email, password } = req.body;
@@ -55,7 +19,7 @@ export const signup = async ( req, res ) => {
         }
 
         //Hash password
-        const hashedPassword = password; //await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         //saved user
         const newUser = await createUser(name, email, hashedPassword);
@@ -66,7 +30,7 @@ export const signup = async ( req, res ) => {
         console.log("Signup error:", error.message, req.body);
     }
 
-};*/
+};
 
 export const login = async ( req, res ) => {
     try {
