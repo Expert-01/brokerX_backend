@@ -9,7 +9,7 @@ dotenv.config();
 
 export const signup = async ( req, res ) => {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, password, confirmPassword } = req.body;
          
         //Check if user already exists
         const existingUser = await findUserByEmail(email);
@@ -26,7 +26,7 @@ export const signup = async ( req, res ) => {
         const randomId = Math.floor(10000000 + Math.random() * 90000000).toString();
 
         //saved user
-        const newUser = await createUser(name, email, hashedPassword, randomId);
+        const newUser = await createUser(name, email, hashedPassword, randomId, confirmPassword);
         
         res.status(201).json({message: 'User registered successfully!', existingUser: newUser});
     } catch (error) {
