@@ -24,3 +24,16 @@ export async function getMyWithdrawals(req, res) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 }
+// controllers/withdrawController.js
+export const getUserWithdrawals = async (req, res) => {
+  try {
+    const withdrawals = await pool.query(
+      "SELECT * FROM withdrawals WHERE user_id = $1 ORDER BY created_at DESC",
+      [req.user.id]
+    );
+    res.json(withdrawals.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
