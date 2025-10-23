@@ -158,3 +158,87 @@ export const getAllRegisteredUsers = async (req, res) => {
   }
 };
 
+
+
+//
+
+// 1️⃣ Fetch all pending withdrawals
+export const getPendingWithdrawals = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM withdrawals WHERE status = 'pending' ORDER BY created_at DESC"
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching withdrawals:", error);
+    res.status(500).json({ message: "Server error fetching withdrawals" });
+  }
+};
+
+// 2️⃣ Approve a withdrawal
+export const approveWithdrawal = async (req, res) => {
+  const { id } = req.params;
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    // Get withdrawal details
+    const { rows } = await client.query(
+      "SELECT user_id, amount, status FROM withdrawals WHERE id = $1",
+      [id]
+    );
+    if (rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ message: "Withdrawal not found" });
+    }
+
+    const withdrawal = rows[0];
+    if (withdrawal.status !== "pending") {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ message: "Withdrawal already processed" });
+    }
+
+    // Deduct balance from user's wallet
+    await client.query(
+      "UPDATE users SET balance = balance - $1 WHERE id = $2",
+      [withdrawal.amount, withdrawal.user_id]
+    );
+
+    // Update withdrawal status to approved
+    await client.query(
+      "UPDATE withdrawals SET status = 'approved', processed_at = NOW() WHERE id = $1",
+      [id]
+    );
+
+    await client.query("COMMIT");
+    res.json({ message: "Withdrawal approved successfully" });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error approving withdrawal:", error);
+    res.status(500).json({ message: "Server error approving withdrawal" });
+  } finally {
+    client.release();
+  }
+};
+
+// 3️⃣ Reject a withdrawal
+export const rejectWithdrawal = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      "UPDATE withdrawals SET status = 'rejected', processed_at = NOW() WHERE id = $1 RETURNING *",
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "Withdrawal not found" });
+    }
+
+    res.json({ message: "Withdrawal rejected successfully" });
+  } catch (error) {
+    console.error("Error rejecting withdrawal:", error);
+    res.status(500).json({ message: "Server error rejecting withdrawal" });
+  }
+};
