@@ -24,7 +24,7 @@ export async function getMyWithdrawals(req, res) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 }
-// controllers/withdrawController.js
+/*// controllers/withdrawController.js
 export const getUserWithdrawals = async (req, res) => {
   try {
     const withdrawals = await pool.query(
@@ -36,4 +36,4 @@ export const getUserWithdrawals = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Server error" });
   }
-};
+};*/
